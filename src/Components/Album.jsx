@@ -6,17 +6,17 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import ImagesContext from "../Context/ImagesContext";
 import ImageListItem from "@mui/material/ImageListItem";
-
 import { Button, Stack } from "@mui/material";
 import { useSelector } from "react-redux";
 
 function Album(props) {
   // const { loginSuccess } = useContext(LoginContext);
-  
-  const loginSuccess=useSelector(state=>state.loginSuccess)
+
+  const loginSuccess = useSelector((state) => state.loginSuccess);
   const { ImagesCollection } = useContext(ImagesContext);
-  const [filteredData,setFilteredData]=useState(ImagesCollection)
-  
+  const [filteredData, setFilteredData] = useState(ImagesCollection);
+  const [zoomImage, setZoomImage] = useState(false);
+  const [zoomUrl, setZoomUrl] = useState();
   const navigate = useNavigate();
   useEffect(() => {
     if (!loginSuccess) {
@@ -24,104 +24,131 @@ function Album(props) {
     }
   }, [loginSuccess, navigate]);
 
-  
-const filter=(item)=>{
-  const filteredImages=ImagesCollection.filter((el)=>{
-    return el.title===item
-  })
-  setFilteredData( item?filteredImages:ImagesCollection)
-  
-}
+  const filter = (item) => {
+    const filteredImages = ImagesCollection.filter((el) => {
+      return el.title === item;
+    });
+    setFilteredData(item ? filteredImages : ImagesCollection);
+  };
 
+  const handleClick = (url) => {
+    setZoomImage(true);
+    setZoomUrl(url);
+  };
+  const handleX=()=>{
+    setZoomImage(false)
+    setZoomUrl()
+  }
 
   return (
     <div>
-      <Grid container justifyContent="center">
-        <Grid item xs={12} textAlign="center">
-          <Typography
-            variant="h2"
-            style={{ fontFamily: "Kunstler Script", fontWeight: "bolder" }}
-          >
-            Welcome to Photo Gallery
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Grid container justifyContent="center">
-            <Grid item xs={4}>
-              <Autocomplete
-                freeSolo
-                id="searchBar"
-                disableClearable
-                options={[...new Set(ImagesCollection.map((option) => option.title))]}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Search by category"
-                    InputProps={{
-                      ...params.InputProps,
-                      type: "search",
-                    }}
-                    onSelect={(e)=>filter(e.target.value)}
-                    
-                  />
-                )}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-
-        <Grid item xs={12} mt={3}>
-          <Grid container justifyContent="center">
-            <Grid item xs={6}>
-              <Stack
-                spacing={4}
-                direction="row"
-                sx={{ justifyContent: "center" }}
+      <Grid container justifyContent="center" style={{backgroundColor:"seashell"}}>
+        {!zoomImage ? (
+          <Grid item xs={12}>
+            <Grid item xs={12} textAlign="center">
+              <Typography
+                variant="h2"
+                style={{ fontFamily: "Kunstler Script", fontWeight: "bolder" }}
               >
-              <Button variant="contained" p={4}  onClick={()=>filter()}>
-                  All
-                </Button>
-                <Button variant="contained" p={4} onClick={()=>filter("Mountains")}>
-                  Mountains
-                </Button>
-                <Button variant="contained" p={4} onClick={()=>filter("Birds")}>
-                  Birds
-                </Button>
-                <Button variant="contained" p={4} onClick={()=>filter("Bikes")}>
-                  Bikes
-                </Button>
-                <Button variant="contained" p={4} onClick={()=>filter("Beaches")}>
-                  Beaches
-                </Button>
-              </Stack>
+                Welcome to Photo Gallery
+              </Typography>
             </Grid>
-          </Grid>
-        </Grid>
-
-        <Grid item xs={12} m={5}>
-          
-            
-
-              <Grid container spacing={2} justifyContent="center">
-                  {  
-                  (filteredData.map((item, index) => (
-                <Grid item  key={index} xs={12} sm={6} md={4} xl={3}>
-                <ImageListItem  style={{width:"100%", height:"100%", border:"1px solid black"}} >
-                
-                  <img src={item.image} alt={item.title} loading="lazy" style={{cursor:"pointer"}}/>
-                 
-                </ImageListItem>
+            <Grid item xs={12}>
+              <Grid container justifyContent="center">
+                <Grid item xs={4}>
+                  <Autocomplete
+                    freeSolo
+                    id="searchBar"
+                    disableClearable
+                    options={[
+                      ...new Set(
+                        ImagesCollection.map((option) => option.title)
+                      ),
+                    ]}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Search by category"
+                        InputProps={{
+                          ...params.InputProps,
+                          type: "search",
+                        }}
+                        onSelect={(e) => filter(e.target.value)}
+                      />
+                    )}
+                  />
                 </Grid>
-              )))}
-            
-                    
               </Grid>
-              
+            </Grid>
 
+            <Grid item xs={12} mt={3}>
+              <Grid container justifyContent="center">
+                <Grid item xs={6}>
+                  <Stack
+                    spacing={4}
+                    direction="row"
+                    sx={{ justifyContent: "center" }}
+                  >
+                    <Button variant="contained" p={4} onClick={() => filter()}>
+                      All
+                    </Button>
+                    <Button
+                      variant="contained"
+                      p={4}
+                      onClick={() => filter("Mountains")}
+                    >
+                      Mountains
+                    </Button>
+                    <Button
+                      variant="contained"
+                      p={4}
+                      onClick={() => filter("Birds")}
+                    >
+                      Birds
+                    </Button>
+                    <Button
+                      variant="contained"
+                      p={4}
+                      onClick={() => filter("Bikes")}
+                    >
+                      Bikes
+                    </Button>
+                    <Button
+                      variant="contained"
+                      p={4}
+                      onClick={() => filter("Beaches")}
+                    >
+                      Beaches
+                    </Button>
+                  </Stack>
+                </Grid>
+              </Grid>
+            </Grid>
 
-          
+            <Grid item xs={12} m={5}>
+              <Grid container spacing={2} justifyContent="center">
+                {filteredData.map((item, index) => (
+                  <Grid item key={index} xs={12} sm={6} md={4} xl={3}>
+                    <ImageListItem
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        border: "1px solid black",
+                      }}
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        loading="lazy"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleClick(item.image, item.title)}
+                      />
+                    </ImageListItem>
+                  </Grid>
+                ))}
+              </Grid>
 
-          {/* <Grid container justifyContent="center" spacing={2} >
+              {/* <Grid container justifyContent="center" spacing={2} >
             {ImagesCollection.map((item, index) => (
               <Grid item xs={3} >
                 <ImageListItem key={index}>
@@ -130,7 +157,21 @@ const filter=(item)=>{
               </Grid>
             ))}
           </Grid> */}
-        </Grid>
+            </Grid>
+          </Grid>
+        ) : (
+          
+          <Grid item xs={12} style={{marginTop:"10%",marginLeft:"30%"}}>
+            <Grid style={{width:"600px", display:"flex",justifyContent:"flex-end"}}>
+            <Typography style={{fontSize:"20px",cursor:"pointer"}} onClick={handleX}>Close</Typography>
+            </Grid>
+            <Grid style={{width:"00px", height:"600px"}}>
+            <img src={zoomUrl} alt="zoom"></img>  
+            </Grid>
+          </Grid>
+          
+          
+        )}
       </Grid>
     </div>
   );

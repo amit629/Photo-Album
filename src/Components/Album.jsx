@@ -165,7 +165,7 @@ function Album(props) {
             <Grid style={{width:"600px", display:"flex",justifyContent:"flex-end"}}>
             <Typography style={{fontSize:"20px",cursor:"pointer"}} onClick={handleX}>Close</Typography>
             </Grid>
-            <Grid style={{width:"00px", height:"600px"}}>
+            <Grid style={{width:"600px", height:"600px"}}>
             <img src={zoomUrl} alt="zoom"></img>  
             </Grid>
           </Grid>

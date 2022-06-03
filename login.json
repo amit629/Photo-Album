@@ -1,0 +1,28 @@
+{
+  "loginuser": [
+    {
+      "id": 1,
+      "fullName": "Nishant",
+      "userName": "nishant512",
+      "email": "nishant@gmail.com",
+      "contact": "8882234342",
+      "password": "12345"
+    },
+    {
+      "fullName": "John",
+      "userName": "john",
+      "email": "john@gmail.com",
+      "contact": "3145345345324",
+      "password": "12345",
+      "id": 3
+    },
+    {
+      "fullName": "John",
+      "userName": "john1",
+      "email": "john1@gmail.com",
+      "contact": "432565734",
+      "password": "12345",
+      "id": 4
+    }
+  ]
+}

@@ -26,6 +26,7 @@ function ImageUpload(props) {
     const data = new FormData();
     data.append("image", imageFile);
     data.append("category",category)    
+    debugger
     const response=await fetch("http://localhost:5000/single", {
       method: "POST",
       body: data,

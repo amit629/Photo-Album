@@ -26,7 +26,60 @@ app.get("/",(req,res)=>{
     res.sendFile('index.html', { root: __dirname } )
 })
 
-app.post("/single",upload.single("image"),(req,res)=>{
+
+app.post("/upload",upload.array("images",10),(req,res)=>{
+    // console.log(req.files)
+/*     console.log(req.body.category)
+    console.log(req.file.path) */
+    var imageName=[]
+    var imageUrl=[]
+   var files=req.files
+   for(var i=0;i<files.length;i++)
+   {
+    imageName[i]=req.files[i].filename    
+    imageUrl[i]=`http://localhost:${port}/${imageName[i]}`
+   }
+   console.log(imageName)
+   console.log(imageUrl)
+
+   /*  var imageName=req.file.filename */
+    var imageCategory=req.body.category
+    /* var imageUrl=`http://localhost:${port}/${imageName}` */
+    mysqlconnector.getConnection((err,connection)=>{
+        if(err)
+        {
+            connection.release()            
+            res.send(err)
+            res.end()
+        }
+        else
+        {
+            connection.release()
+            // var q="insert into gallery(imageName,imageTag,imageUrlName) values('"+imageName+"','"+imageCategory+"','"+imageUrl+"')"
+            var q="insert into gallery (imageName,imageTag,imageUrlName) values ?";
+            var values= files.map((item,index)=>{
+                return [req.files[index].filename ,imageCategory,`http://localhost:${port}/${imageName[index]}`]
+            })
+           console.log(values)
+            connection.query(q,[values],(err,result)=>{
+                if(err)
+                {
+                    res.send(err)
+                    res.end()
+
+                }
+                else
+                {
+                    res.send("image has been uploaded")
+                    res.end()
+                }
+            })
+        }
+    })
+    
+})
+
+/* app.post("/single",upload.single("image"),(req,res)=>{
     console.log(req.file)
     console.log(req.body.category)
     console.log(req.file.path)
@@ -62,7 +115,7 @@ app.post("/single",upload.single("image"),(req,res)=>{
         }
     })
     
-})
+}) */
 
 
 app.post("/delete/:imageName",(req,res)=>{
@@ -127,18 +180,80 @@ app.get("/extract",(req,res)=>{
     })
 })
 
+app.get("/filter/:filterCategory",(req,res)=>{
+    const {filterCategory}=req.params
+    console.log(filterCategory)
+    mysqlconnector.getConnection((err,connection)=>{
+        if(err)
+        {
+            connection.release()
+            res.send(err)
+            res.end()
+        }
+        else
+        {
+            var q="select * from gallery where imageTag='"+filterCategory+"'";
+            connection.query(q,(err,result)=>{
+                if(err)
+                {
+                    connection.release()
+                    res.send(err)
+                    res.end()
+                }
+                else{
+                    connection.release()
+                    res.send(result)
+                    res.end()
+                }
+            })
+        }
+    })
+})
+
+
+app.get("/filter/:category",(req,res)=>{
+    const {category}=req.params
+
+    mysqlconnector.getConnection((err,connection)=>{
+        if(err)
+        {
+            connection.release()
+            req.send(err)
+            res.end()
+        }
+        else
+        {
+            connection.release()
+            var q="select * from gallery where imageTag='"+category+"'"
+            connection.query(q,(err,result)=>{
+                if(err)
+                {
+                    res.send(err)
+                    res.end()
+                }
+                else
+                {
+                    res.send(result)
+                    res.end()
+                }
+            })
+        }
+    })
+})
+
 
 /* app.post("/multiple",upload.array("images",3),(req,res)=>{
     console.log(req.files)
     res.send("Multiple files upload success")
-}) */
+}) */   
 
 app.post("/rename/:oldName/:category/:newName",(req,res)=>{
-
+        
     const {oldName,category,newName}=req.params
     console.log(oldName)
     console.log(newName)
     console.log(category)
+    
     fileSystem.rename(`./public/images/${oldName}`,`./public/images/${newName}`,function(err){
         if(err)
         {
@@ -176,6 +291,8 @@ app.post("/rename/:oldName/:category/:newName",(req,res)=>{
         }
     })
 })
+
+
 
 
 app.listen(port,()=>{

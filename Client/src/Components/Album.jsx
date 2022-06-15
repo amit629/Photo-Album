@@ -33,7 +33,7 @@ function Album(props) {
   const loginSuccess = useSelector((state) => state.loginSuccess);
   const photos = JSON.parse(localStorage.getItem("albumData"));
   const [filteredData, setFilteredData] = useState(photos);
-  const [filtered,setFiltered]=useState(false)
+  
   /* const [zoomImage, setZoomImage] = useState(false);
   const [zoomUrl, setZoomUrl] = useState(); */
   const [imageFile, setImageFile] = useState([]);
@@ -41,7 +41,7 @@ function Album(props) {
   /* const [renamedImageId, setRenamedImageId] = useState(); */
   const [imageEditName,setImageEditName]=useState()
   const [clickedImg,setClickedImage]=useState(null)
-  const [currentIndex,setCurrentIndex]=useState(null)
+  /* const [currentIndex,setCurrentIndex]=useState(null) */
   const notify = () => toast("Logged in successfully!");
   useEffect(() => {
     notify();
@@ -64,10 +64,9 @@ function Album(props) {
     }
   }, [loginSuccess, navigate]);
   useEffect(() => {
-    if(filtered)
-    {
+    
     filter();
-    }
+    
   });
   const style = {
     position: 'absolute',
@@ -127,7 +126,6 @@ function Album(props) {
   /* Image Filter Function Start */
 
   const filter = (item) => {
-    setFiltered(true)
     const filteredImages = photos.filter((el) => {
       return el.imageTag === item;
     });
@@ -431,7 +429,7 @@ const handleClick=(item,index)=>{
             </Grid>
             <Grid item xs={12} m={5}>
               <Grid container spacing={2} justifyContent="center">
-                {filtered?filteredData.map((item, index) => (
+                {filteredData.map((item, index) => (
                   <Grid item key={index} xs={12} sm={6} md={4} xl={3} className="wrapper-images">
                     <ImageListItem
                       style={{
@@ -488,64 +486,7 @@ const handleClick=(item,index)=>{
                     </ImageListItem>
                   </Grid>
                 ))
-                :
-                photos.map((item, index) => (
-                  <Grid item key={index} xs={12} sm={6} md={4} xl={3} className="wrapper-images">
-                    <ImageListItem
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        border: "1px solid black",
-                        position: "relative",
-                      }}
-                    >
-                      {/* ________________Image rename and delete Buttons start______________ */}
-                      <Grid
-                        sx={{ display: "flex", justifyContent: "flex-start" }}
-                      >
-                      <React.Fragment>
-                        <Button
-                          onClick={() => {openEditSlider(item);
-                          toggleDrawer('left',true)}}
-                          style={{ position: "absolute" }} 
-                        >
-                          <EditIcon />
-                        </Button>
-                        <Drawer
-                        BackdropProps={{ invisible: true }}
-                        anchor='left'
-                        open={sliderState['left']}
-                        onClose={()=>toggleDrawer('left', false)}
-                        >
-                        {list('left',item.imageName)}
-                       </Drawer>
-          </React.Fragment>
-                      </Grid>
-                      <Grid
-                        sx={{ display: "flex", justifyContent: "flex-end" }}
-                      >
-                        <Button
-                          style={{ position: "absolute" }}
-                          onClick={() => removeImage(item.imageName)}
-                        >
-                          <DeleteIcon />
-                        </Button>
-                      </Grid>
-                      {/* ________________Image rename and delete Buttons end______________ */}
-                      {
-                        
-                        <img
-                          src={item.imageUrlName}
-                          alt={item.imageTag}
-                          loading="lazy"
-                          style={{ cursor: "pointer" }}
-                          onClick={()=>handleClick(item,index)}
-                        />
-                        
-                      }
-                    </ImageListItem>
-                  </Grid>
-                ))}
+               }
                 {clickedImg&&(<Modals clickedImg={clickedImg} setClickedImage={setClickedImage}/>)}
                 
               </Grid>
